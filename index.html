@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPACE ARCADE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <canvas id="gameCanvas"></canvas>
+    
+    <div class="ui-overlay">
+        <div class="game-stats hidden" id="gameStats">
+            <div class="stat-item">
+                <span>👤 <span id="playerNameDisplay">Player</span></span>
+            </div>
+            <div class="stat-item">
+                <span>❤️ Lives: <span id="livesDisplay">3</span></span>
+            </div>
+            <div class="stat-item">
+                <span>⭐ Score: <span id="scoreDisplay">0</span></span>
+            </div>
+            <div class="stat-item" id="bestScoreDisplay">
+                <span>🏆 Best: <span id="bestDisplay">0</span></span>
+            </div>
+            <button class="exit-button" id="exitButton" onclick="game.showExitConfirmation()">✕ Выход</button>
+        </div>
+
+        <div class="menu-container hidden" id="authScreen">
+            <h1 class="menu-title">SPACE ARCADE</h1>
+            <div class="auth-form">
+                <div class="form-label">Введите ваше имя:</div>
+                <input type="text" class="form-control" id="playerNameInput" placeholder="Имя игрока" maxlength="20">
+                <button class="menu-btn" onclick="game.login()" style="margin-top: 20px;">Начать</button>
+                <div class="error-message hidden" id="authError">Пожалуйста, введите имя</div>
+            </div>
+        </div>
+
+        <div class="menu-container hidden" id="difficultyMenu">
+            <h1 class="menu-title" style="font-size: 48px;">ВЫБЕРИ СЛОЖНОСТЬ</h1>
+            <div class="menu-buttons">
+                <button class="menu-btn difficulty-easy" onclick="game.selectDifficulty('easy')">
+                    🟢 ЛЕГКИЙ
+                    <div class="menu-btn-description" id="easyDescription">Как обычно</div>
+                </button>
+                <button class="menu-btn difficulty-medium" onclick="game.selectDifficulty('medium')">
+                    🟡 СРЕДНИЙ
+                    <div class="menu-btn-description" id="mediumDescription">Сложнее!</div>
+                </button>
+                <button class="menu-btn difficulty-hard" onclick="game.selectDifficulty('hard')">
+                    🔴 СЛОЖНЫЙ
+                    <div class="menu-btn-description" id="hardDescription">Экстрим!</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="menu-container hidden" id="skinSelectScreen">
+            <h1 class="menu-title" style="font-size: 48px;">ВЫБЕРИ ПЛАНЕТУ</h1>
+            <div style="font-size: 20px; margin-bottom: 30px; opacity: 0.8;">
+                <div>Режим: <span id="selectedModeText" style="color: var(--color-primary);">-</span></div>
+                <div>Сложность: <span id="selectedDifficultyText" style="color: var(--color-primary);">-</span></div>
+            </div>
+            <div class="skin-selector">
+                <div class="skin-options">
+                    <div class="skin-option earth selected" onclick="game.selectSkinForGame('earth')" title="Earth"></div>
+                    <div class="skin-option mars" onclick="game.selectSkinForGame('mars')" title="Mars"></div>
+                    <div class="skin-option jupiter" onclick="game.selectSkinForGame('jupiter')" title="Jupiter"></div>
+                    <div class="skin-option saturn" onclick="game.selectSkinForGame('saturn')" title="Saturn"></div>
+                    <div class="skin-option neptune" onclick="game.selectSkinForGame('neptune')" title="Neptune"></div>
+                    <div class="skin-option venus" onclick="game.selectSkinForGame('venus')" title="Venus"></div>
+                    <div class="skin-option uranus" onclick="game.selectSkinForGame('uranus')" title="Uranus"></div>
+                    <div class="skin-option ice" onclick="game.selectSkinForGame('ice')" title="Ice World"></div>
+                    <div class="skin-option lava" onclick="game.selectSkinForGame('lava')" title="Lava World"></div>
+                    <div class="skin-option asteroid" onclick="game.selectSkinForGame('asteroid')" title="Asteroid"></div>
+                    <div class="skin-option rainbow" onclick="game.selectSkinForGame('rainbow')" title="Rainbow"></div>
+                    <div class="skin-option golden" onclick="game.selectSkinForGame('golden')" title="Golden"></div>
+                </div>
+            </div>
+            <button class="menu-btn" onclick="game.startGameFromSkinSelect()" style="margin-top: 40px;">НАЧАТЬ ИГРУ</button>
+        </div>
+
+        <div class="menu-container hidden" id="mainMenu">
+            <h1 class="menu-title">SPACE ARCADE</h1>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="game.showLeaderboard()">
+                    🏆 ЛИДЕРБОРД!
+                    <div class="menu-btn-description">Посмотреть топ игроков</div>
+                </button>
+                <button class="menu-btn" onclick="game.startMode('collect')">
+                    СОБИРАЙ ПЛАНЕТЫ
+                    <div class="menu-btn-description">Перетаскивай планеты нужного цвета</div>
+                </button>
+                <button class="menu-btn" onclick="game.startMode('asteroids')">
+                    АСТЕРОИДЫ
+                    <div class="menu-btn-description">Уничтожай серые, избегай белые</div>
+                </button>
+                <button class="menu-btn" onclick="game.startMode('climbing')">
+                    КОСМИЧЕСКИЙ ПОДЪЁМ
+                    <div class="menu-btn-description">Двигайся в 4 направлениях, стреляй лазером</div>
+                </button>
+            </div>
+            <div class="skin-selector">
+                <div class="skin-selector-title">Select Your Planet</div>
+                <div class="skin-options">
+                    <div class="skin-option earth selected" onclick="game.selectSkin('earth')" title="Earth"></div>
+                    <div class="skin-option mars" onclick="game.selectSkin('mars')" title="Mars"></div>
+                    <div class="skin-option jupiter" onclick="game.selectSkin('jupiter')" title="Jupiter"></div>
+                    <div class="skin-option saturn" onclick="game.selectSkin('saturn')" title="Saturn"></div>
+                    <div class="skin-option neptune" onclick="game.selectSkin('neptune')" title="Neptune"></div>
+                    <div class="skin-option venus" onclick="game.selectSkin('venus')" title="Venus"></div>
+                    <div class="skin-option uranus" onclick="game.selectSkin('uranus')" title="Uranus"></div>
+                    <div class="skin-option ice" onclick="game.selectSkin('ice')" title="Ice World"></div>
+                    <div class="skin-option lava" onclick="game.selectSkin('lava')" title="Lava World"></div>
+                    <div class="skin-option asteroid" onclick="game.selectSkin('asteroid')" title="Asteroid"></div>
+                    <div class="skin-option rainbow" onclick="game.selectSkin('rainbow')" title="Rainbow"></div>
+                    <div class="skin-option golden" onclick="game.selectSkin('golden')" title="Golden"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="collect-instruction hidden" id="collectInstruction">
+            Собери все <span id="targetColorText">СИНИЕ</span> планеты!
+        </div>
+
+        <div class="timer-bar-container hidden" id="timerBarContainer">
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+
+        <div class="collect-zone hidden" id="collectZone">📦 Корзина</div>
+
+        <div class="laser-status hidden" id="laserStatus">⚡ Лазер готов</div>
+
+        <div class="menu-container hidden" id="leaderboardScreen">
+            <h1 class="menu-title" style="font-size: 48px;">🏆 ЛИДЕРБОРД</h1>
+            <div class="leaderboard-list" id="leaderboardList">
+                <div class="leaderboard-empty">Пока нет записей</div>
+            </div>
+            <button class="menu-btn" onclick="game.hideLeaderboard()" style="margin-top: 30px;">Назад</button>
+        </div>
+
+        <div class="game-over-screen hidden" id="gameOverScreen">
+            <h2 class="game-over-title">GAME OVER</h2>
+            <div class="game-over-stats">
+                <div>Финальный счёт: <span id="finalScore">0</span></div>
+                <div id="leaderboardPosition"></div>
+            </div>
+            <div class="game-over-buttons">
+                <button class="game-over-btn" onclick="game.restart()">Заново</button>
+                <button class="game-over-btn" onclick="game.returnToMenu()">Меню</button>
+            </div>
+        </div>
+
+        <div class="confirmation-dialog hidden" id="exitConfirmation">
+            <div class="confirmation-content">
+                <h3>Вы уверены?</h3>
+                <p>Прогресс игры будет потерян</p>
+                <div class="confirmation-buttons">
+                    <button class="game-over-btn" onclick="game.confirmExit()">Да</button>
+                    <button class="game-over-btn" onclick="game.cancelExit()">Нет</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
